@@ -9,11 +9,11 @@ module.exports = FileHyperclick =
     directories:
       description: "directories under project paths that may contain the file",
       type: 'array',
-      default: ['/lib/src','/ext/src']
-    extension:
-      description: "extension name of the file",
-      type: 'string',
-      default: '.coffee'
+      default: ['/src','/views']
+    extensions:
+      description: "extension names of the file",
+      type: 'array',
+      default: ['.coffee','.jade']
 
   activate: (state) ->
     @subscriptions = new CompositeDisposable
@@ -25,17 +25,24 @@ module.exports = FileHyperclick =
       range: range, callback: ->
         dirs = do atom.project.getPaths
         subDirs = atom.config.get 'file-hyperclick.directories'
+        exts = atom.config.get 'file-hyperclick.extensions'
+        targets = ("#{text}#{ext}" for ext in exts)
         dirs.forEach (dir) ->
           subDirs.forEach (subDir) ->
             sdir = path.join dir, subDir
             options =
               fileFilters: [
                 (path) ->
-                  file = text + atom.config.get 'file-hyperclick.extension'
-                  path.slice(-file.length) is file
+                  for file in targets
+                    if path.slice(-file.length) is file
+                      return true
+                  false
               ]
             mfs.find sdir, options, (err, files) ->
-              atom.workspace.open files[0] if files[0] and not err
+              if not err
+                files?.forEach (file) ->
+                  atom.workspace.open file
+                  return
               return
             return
           return

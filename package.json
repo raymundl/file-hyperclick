@@ -1,7 +1,7 @@
 {
   "name": "file-hyperclick",
   "main": "./lib/file-hyperclick",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hyperclick on word to navigate to the file with right ext in right directories.",
   "keywords": [],
   "repository": "https://github.com/raymundl/file-hyperclick",
